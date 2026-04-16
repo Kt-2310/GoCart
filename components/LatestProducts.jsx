@@ -1,24 +1,37 @@
-'use client'
-import React from 'react'
-import Title from './Title'
-import ProductCard from './ProductCard'
-import { useSelector } from 'react-redux'
+"use client";
+import { useEffect, useState } from "react";
 
-const LatestProducts = () => {
+export default function LatestProducts() {
+  const [products, setProducts] = useState([]);
 
-    const displayQuantity = 4
-    const products = useSelector(state => state.product.list)
+  useEffect(() => {
+    fetch("/api/products")
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }, []);
 
-    return (
-        <div className='px-6 my-30 max-w-6xl mx-auto'>
-            <Title title='Latest Products' description={`Showing ${products.length < displayQuantity ? products.length : displayQuantity} of ${products.length} products`} href='/shop' />
-            <div className='mt-12 grid grid-cols-2 sm:flex flex-wrap gap-6 justify-between'>
-                {products.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, displayQuantity).map((product, index) => (
-                    <ProductCard key={index} product={product} />
-                ))}
-            </div>
+  return (
+    <div className="grid grid-cols-4 gap-6 px-10 py-10">
+      {products.map((p) => (
+        <div
+          key={p.id}
+          className="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-lg transition"
+        >
+          <img
+            src={p.images?.[0] || "https://via.placeholder.com/200"}
+            alt={p.name}
+            className="w-full h-40 object-contain mb-3"
+          />
+
+          <h3 className="font-semibold">{p.name}</h3>
+
+          <p className="text-green-600 font-bold">₹{p.price}</p>
+
+          <p className="text-gray-400 line-through text-sm">
+            ₹{p.mrp}
+          </p>
         </div>
-    )
+      ))}
+    </div>
+  );
 }
-
-export default LatestProducts
