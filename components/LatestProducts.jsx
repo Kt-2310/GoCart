@@ -5,10 +5,13 @@ export default function LatestProducts() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then(res => res.json())
-      .then(data => setProducts(data));
-  }, []);
+  fetch("/api/products")
+    .then(res => res.json())
+    .then(data => {
+      console.log(data); // 👈 ADD THIS
+      setProducts(Array.isArray(data) ? data : []);
+    });
+}, []);
 
   return (
     <div className="grid grid-cols-4 gap-6 px-10 py-10">
